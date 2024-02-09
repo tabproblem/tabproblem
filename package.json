@@ -1,0 +1,35 @@
+{
+  "name": "tabproblem",
+  "version": "0.0.1",
+  "description": "quit your tab problem.",
+  "main": "tailwind.config.js",
+  "dependencies": {
+    "@bufbuild/buf": "^1.29.0",
+    "@bufbuild/protobuf": "^1.7.2",
+    "@bufbuild/protoc-gen-es": "^1.7.2",
+    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
+    "@heroicons/react": "^2.1.1",
+    "@tailwindcss/typography": "^0.5.10",
+    "@types/chrome": "^0.0.260",
+    "@types/react-dom": "^18.2.19",
+    "daisyui": "^4.6.2",
+    "esbuild": "^0.20.0",
+    "react": "^18.2.0",
+    "react-hot-toast": "^2.4.1",
+    "vis-timeline": "^7.7.3"
+  },
+  "scripts": {
+    "dev": "TARGETS=extension node esbuild.mjs",
+    "build": "BUILD=true node esbuild.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tabproblem/tabproblem.git"
+  },
+  "author": "breadchris",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tabproblem/tabproblem/issues"
+  },
+  "homepage": "https://github.com/tabproblem/tabproblem#readme"
+}

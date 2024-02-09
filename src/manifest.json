@@ -1,0 +1,34 @@
+{
+  "name": "tabproblem",
+  "version": "1.0",
+  "manifest_version": 3,
+  "description": "quit your tab problem.",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "tab.html"
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+  ],
+  "permissions": [
+    "activeTab",
+    "history",
+    "tabs",
+    "storage"
+  ],
+  "web_accessible_resources": [{
+    "resources": ["tailwind.css"],
+    "matches": ["<all_urls>"]
+  }],
+  "chrome_url_overrides": {
+    "newtab": "tab.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' http://localhost:8080; object-src 'self'"
+  },
+  "host_permissions": [
+    "<all_urls>"
+  ]
+}
