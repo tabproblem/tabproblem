@@ -2,23 +2,30 @@ syntax = "proto3";
 
 package browser;
 
-message History {
-  repeated Node nodes = 1;
-  repeated Edge edges = 2;
+message HistoryExport {
+  string version = 1;
+  History history = 2;
 }
 
-message Node {
+message History {
+  repeated Visit visits = 1;
+  repeated Trip trips = 2;
+}
+
+message Visit {
   string id = 1;
   string url = 2;
   string title = 3;
-  double open = 4;
-  double close = 5;
+  string tab = 4;
+  repeated Focus focus = 5;
 }
 
-message Edge {
+message Focus {
+  double open = 1;
+  double close = 2;
+}
+
+message Trip {
   string from = 1;
   string to = 2;
-  string tab = 3;
-  double visit_time = 4;
-  double visit_duration = 5;
 }

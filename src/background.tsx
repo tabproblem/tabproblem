@@ -1,5 +1,5 @@
 /// <reference types="chrome"/>
-import {History, Node, Edge} from "@/gen/proto/history_pb";
+import {History, Visit, Trip, Focus} from "@/gen/proto/history_pb";
 import {uuidv4} from "./util";
 import {getItem, setItem} from "./storage";
 import {historyDelete, historyGet} from "@/shared";
@@ -73,7 +73,6 @@ const chromeExt = () => {
         }
         const tabDetails = await getTabDetails(tabId);
         if (tabDetails) {
-            // console.log('onUpdated', tabId, changeInfo, tabDetails);
             const t = tabs.get(tabId);
             if (t) {
                 tabs.set(tabId, {
@@ -83,40 +82,83 @@ const chromeExt = () => {
                 });
 
                 if (changeInfo.status === 'complete') {
-                    console.log('onUpdated:complete', tabId, tabDetails.url, tabDetails);
                     const history = await getHistory();
 
                     if (tabDetails.url) {
-                        const newNode = new Node({
+                        const newNode = new Visit({
                             id: uuidv4(),
                             url: tabDetails.url,
                             title: tabDetails.title || '',
-                            open: Date.now(),
-                            close: -1
+                            tab: tabId.toString(),
+                            focus: [
+                                new Focus({
+                                    open: Date.now(),
+                                })
+                            ]
                         });
-                        const foundNode = history.nodes.find((n) => n.url === tabDetails.url);
+                        const foundNode = history.visits.find((n) => n.url === tabDetails.url);
                         if (!foundNode) {
-                            history.nodes.push(newNode);
+                            history.visits.push(newNode);
                         }
                         const n = foundNode || newNode;
 
-                        const prevNode = history.nodes.find((n) => n.url === t?.prev?.url);
-                        console.log("prev", prevNode, t);
+                        const prevNode = history.visits.find((n) => n.url === t?.prev?.url);
                         if (prevNode) {
-                            history.nodes[history.nodes.findIndex((n) => n.id === prevNode.id)] = new Node({
+                            const visitIdx = history.visits.findIndex((n) => n.id === prevNode.id);
+                            // update close on the last focus item
+                            const newFocus = prevNode.focus.map((f, idx) => {
+                                if (idx === prevNode.focus.length - 1) {
+                                    return new Focus({
+                                        ...f,
+                                        close: Date.now(),
+                                    });
+                                }
+                                return f;
+                            })
+
+
+                            history.visits[visitIdx] = new Visit({
                                 ...prevNode,
-                                close: Date.now()
+                                focus: newFocus
                             });
-                            history.edges.push(new Edge({
+                            history.trips.push(new Trip({
                                 from: prevNode.id,
                                 to: n.id,
-                                visitTime: Date.now(),
-                                tab: tabId.toString()
                             }));
                         }
                     }
                     void setHistory(history);
                     // TODO breadchris deal with tabDetails.openerTabId
+                }
+            }
+        }
+    });
+
+    chrome.windows.onFocusChanged.addListener(async (windowId) => {
+        if (windowId === chrome.windows.WINDOW_ID_NONE) {
+            return;
+        }
+        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (tabs.length === 1) {
+            const tab = tabs[0];
+            if (tab.id) {
+                const tabDetails = await getTabDetails(tab.id);
+                if (tabDetails) {
+                    const history = await getHistory();
+                    const foundNode = history.visits.find((n) => n.url === tabDetails.url);
+                    if (foundNode) {
+                        const visitIdx = history.visits.findIndex((n) => n.id === foundNode.id);
+                        history.visits[visitIdx] = new Visit({
+                            ...foundNode,
+                            focus: [
+                                ...history.visits[visitIdx].focus,
+                                new Focus({
+                                    open: Date.now(),
+                                })
+                            ]
+                        });
+                    }
+                    void setHistory(history);
                 }
             }
         }

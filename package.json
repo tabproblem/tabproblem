@@ -8,6 +8,8 @@
     "@bufbuild/protobuf": "^1.7.2",
     "@bufbuild/protoc-gen-es": "^1.7.2",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
+    "@headlessui/react": "^1.7.18",
+    "@headlessui/tailwindcss": "^0.2.0",
     "@heroicons/react": "^2.1.1",
     "@tailwindcss/typography": "^0.5.10",
     "@types/chrome": "^0.0.260",
@@ -16,11 +18,13 @@
     "esbuild": "^0.20.0",
     "react": "^18.2.0",
     "react-hot-toast": "^2.4.1",
+    "recharts": "^2.12.0",
     "vis-timeline": "^7.7.3"
   },
   "scripts": {
     "dev": "TARGETS=extension node esbuild.mjs",
-    "build": "BUILD=true node esbuild.mjs"
+    "build": "BUILD=true node esbuild.mjs",
+    "generate": "npx buf generate"
   },
   "repository": {
     "type": "git",
@@ -31,5 +35,8 @@
   "bugs": {
     "url": "https://github.com/tabproblem/tabproblem/issues"
   },
-  "homepage": "https://github.com/tabproblem/tabproblem#readme"
+  "homepage": "https://github.com/tabproblem/tabproblem#readme",
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.7"
+  }
 }

@@ -49,3 +49,24 @@ function fetchHistory(startTime: number, endTime: number, callback: (results: ch
         callback(results);
     });
 }
+
+export function downloadJson(jsonString: string, filename: string): void {
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+export function getExtensionVersion(): string {
+    const manifest = chrome.runtime.getManifest();
+    return manifest.version;
+}

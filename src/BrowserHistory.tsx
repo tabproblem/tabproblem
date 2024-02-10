@@ -2,7 +2,33 @@ import * as React from "react";
 import {useState, useEffect, useRef, useMemo} from "react";
 import {Timeline as VisTimeline} from "vis-timeline/standalone";
 import {historyDelete, historyGet} from "./shared";
-import {History} from "@/gen/proto/history_pb";
+import {Focus, History, Visit} from "@/gen/proto/history_pb";
+import {Dashboard} from "@/Dashboard";
+
+const randomHistory = () => {
+    // make a history based on a list of domains and logically interesting start and end focus times. They should somewhat overlap
+    const history = new History();
+    const domains = ['google.com', 'facebook.com', 'twitter.com', 'news.ycombinator.com', 'reddit.com', 'github.com', 'youtube.com'];
+    const now = new Date().getTime();
+    for (let i = 0; i < 10; i++) {
+        const visit = new Visit({
+            url: `https://${domains[i % domains.length]}`,
+            title: `Visit ${i}`,
+            focus: [
+                new Focus({
+                    open: now - i * 60 * 1000 * 60,
+                    close: now - i * 60 * 1000 * 60 + 60 * 1000 * 60,
+                }),
+                new Focus({
+                    open: now - i * 60 * 1000 * 60 + 60 * 1000 * 60 * 2,
+                    close: now - i * 60 * 1000 * 60 + 60 * 1000 * 60 * 3,
+                }),
+            ],
+        });
+        history.visits.push(visit);
+    }
+    return history;
+}
 
 const transformHistoryItems = (history: History): {
     items: any[];
@@ -11,7 +37,7 @@ const transformHistoryItems = (history: History): {
     const groupsMap = new Map<string, number>();
     let groupId = 0;
 
-    const timelineItems = history.nodes.map((item, index) => {
+    const timelineItems = history.visits.reduce((acc, item, index) => {
         // Extract domain from URL
         const url = new URL(item.url || "");
         const domain = url.hostname;
@@ -21,19 +47,30 @@ const transformHistoryItems = (history: History): {
             groupsMap.set(domain, groupId++);
         }
         const itemGroupId = groupsMap.get(domain);
+        if (!itemGroupId) {
+            return acc;
+        }
 
-        return {
+        const base = {
             id: index,
             group: itemGroupId,
             content: item.title || item.url,
-            start: new Date(item.open || 0),
-            end: new Date(item.close || 0),
         };
-    });
+        return [
+            ...acc,
+            ...item.focus.filter(i => i.close).map((focus, idx) => {
+                return {
+                    ...base,
+                    start: new Date(focus.open),
+                    end: new Date(focus.close),
+                };
+            })
+        ]
+    }, [] as {id: number, group: number, content: string, start: Date, end: Date}[]);
 
     // Creating group entries for vis-timeline
     // sort groups by the last access time
-    const groups = Array.from(groupsMap.entries())
+    const groupByDomain = Array.from(groupsMap.entries())
         .map(([domain, id]) => ({
             id: id,
             content: domain,
@@ -54,7 +91,7 @@ const transformHistoryItems = (history: History): {
             }
         });
 
-    return { items: groups, groups: [
+    return { items: groupByDomain, groups: [
             { id: 1, content: 'Visits' },
             // { id: 2, content: 'Journeys' },
         ] };
@@ -69,10 +106,8 @@ export const BrowserHistory: React.FC = () => {
 
     const loadBrowserHistory = async () => {
         const response = await chrome.runtime.sendMessage({ action: historyGet });
-        console.log(response);
         if (response && response.data) {
             const h = History.fromJsonString(response.data);
-            console.log(h)
             setBrowserHistory(h);
         }
     }
@@ -88,21 +123,26 @@ export const BrowserHistory: React.FC = () => {
 
 
     // sort by most resently visited
-    const filteredItems = browserHistory?.nodes.filter((item) => {
+    const filteredItems = browserHistory?.visits.filter((item) => {
         if (!domain) {
             return true;
         }
         const url = new URL(item.url || "");
         return url.hostname === domain;
     }).sort((a, b) => {
-        return (b.close || 0) - (a.close || 0);
+        if (a.focus.length === 0) {
+            return 1;
+        }
+        if (b.focus.length === 0) {
+            return -1;
+        }
+        return b.focus[b.focus.length - 1].close - a.focus[a.focus.length - 1].close;
     });
     const timelineRef = useRef(null);
 
     useEffect(() => {
         if (timelineRef.current && browserHistory) {
             const d = transformHistoryItems(browserHistory);
-
             const timeline = new VisTimeline(timelineRef.current, d.items, d.groups, {
                 height: '100%',
                 // editable: true,
@@ -111,7 +151,6 @@ export const BrowserHistory: React.FC = () => {
             const startTime = new Date(endTime.getTime() - 60 * lastNMinutes * 1000);
             timeline.setWindow(startTime, endTime, { animation: true });
             // timeline.fit();
-            // console.log('asdf')
             timeline.on('select', (props) => {
                 setDomain(d.items.find(i => i.id === props.items[0]).content);
             });
@@ -122,37 +161,61 @@ export const BrowserHistory: React.FC = () => {
     }, [browserHistory]);
 
     return (
-        <div style={{height: '500px', width: '100%'}}>
-            test
+        <div style={{height: '500px', width: '100%'}} className={"space-y-2"}>
+            <div className={"navbar"}>
+                <div className={"flex-1"}>
+                    <a className={"btn btn-ghost text-xl"}>tabproblem</a>
+                </div>
+                <div className={"flex-none"}>
+                    <ul className={"menu menu-horizontal px-1"}>
+                        <li>
+                            <button onClick={loadBrowserHistory}>reload</button>
+                        </li>
+                        <li>
+                            <details>
+                                <summary>
+                                    actions
+                                </summary>
+                                <ul className="p-2 bg-base-100 rounded-t-none z-50">
+                                    <li><a>export</a></li>
+                                    <li><a>import</a></li>
+                                    <li><a onClick={deleteHistory}>delete</a></li>
+                                </ul>
+                            </details>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <Dashboard history={browserHistory} />
             <div ref={timelineRef} style={{ width: '100%', height: '100%' }}/>
-            <input type={"number"} value={lastNMinutes} onChange={(e) => setLastNMinutes(parseInt(e.target.value))} />
-            <button className={"btn"} onClick={loadBrowserHistory}>reload</button>
-            <button className={"btn"} onClick={deleteHistory}>delete</button>
-            {domain && (
-                <>
-                    <button onClick={() => setDomain(undefined)}>clear</button>
-                    <p>visits to: {domain}</p>
-                </>
-            )}
-            <table>
-                <thead>
-                <tr>
-                    <th>Domain</th>
-                    <th>URL</th>
-                </tr>
-                </thead>
-                <tbody>
-                {filteredItems && filteredItems.map((item) => {
-                    const url = new URL(item.url || "");
-                    return (
-                        <tr key={item.id}>
-                            <td>{url.hostname}</td>
-                            <td><a href={item.url} target={"_blank"}>{item.url}</a></td>
-                        </tr>
-                    );
-                })}
-                </tbody>
-            </table>
+            <div className="mockup-browser border border-base-300">
+                <div className="mockup-browser-toolbar">
+                    {domain ? (
+                        <div className="input border border-base-300">{domain}</div>
+                    ) : (
+                        <div className="input border border-base-300">what you have been up to</div>
+                    )}
+                </div>
+                <table className={"table"}>
+                    <thead>
+                    <tr>
+                        <th>Domain</th>
+                        <th>URL</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {filteredItems && filteredItems.map((item) => {
+                        const url = new URL(item.url || "");
+                        return (
+                            <tr key={item.id}>
+                                <td>{url.hostname}</td>
+                                <td><a href={item.url} target={"_blank"}>{item.url}</a></td>
+                            </tr>
+                        );
+                    })}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

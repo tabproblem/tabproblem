@@ -1,6 +1,6 @@
 {
   "name": "tabproblem",
-  "version": "1.0",
+  "version": "0.1",
   "manifest_version": 3,
   "description": "quit your tab problem.",
   "background": {
@@ -23,7 +23,7 @@
     "matches": ["<all_urls>"]
   }],
   "chrome_url_overrides": {
-    "newtab": "tab.html"
+    "newtab": "./tab.html"
   },
   "content_security_policy": {
     "extension_pages": "script-src 'self' http://localhost:8080; object-src 'self'"

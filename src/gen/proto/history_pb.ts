@@ -7,18 +7,61 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { Message, proto3 } from "@bufbuild/protobuf";
 
 /**
+ * @generated from message browser.HistoryExport
+ */
+export class HistoryExport extends Message<HistoryExport> {
+  /**
+   * @generated from field: string version = 1;
+   */
+  version = "";
+
+  /**
+   * @generated from field: browser.History history = 2;
+   */
+  history?: History;
+
+  constructor(data?: PartialMessage<HistoryExport>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "browser.HistoryExport";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "version", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "history", kind: "message", T: History },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): HistoryExport {
+    return new HistoryExport().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): HistoryExport {
+    return new HistoryExport().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): HistoryExport {
+    return new HistoryExport().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: HistoryExport | PlainMessage<HistoryExport> | undefined, b: HistoryExport | PlainMessage<HistoryExport> | undefined): boolean {
+    return proto3.util.equals(HistoryExport, a, b);
+  }
+}
+
+/**
  * @generated from message browser.History
  */
 export class History extends Message<History> {
   /**
-   * @generated from field: repeated browser.Node nodes = 1;
+   * @generated from field: repeated browser.Visit visits = 1;
    */
-  nodes: Node[] = [];
+  visits: Visit[] = [];
 
   /**
-   * @generated from field: repeated browser.Edge edges = 2;
+   * @generated from field: repeated browser.Trip trips = 2;
    */
-  edges: Edge[] = [];
+  trips: Trip[] = [];
 
   constructor(data?: PartialMessage<History>) {
     super();
@@ -28,8 +71,8 @@ export class History extends Message<History> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "browser.History";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "nodes", kind: "message", T: Node, repeated: true },
-    { no: 2, name: "edges", kind: "message", T: Edge, repeated: true },
+    { no: 1, name: "visits", kind: "message", T: Visit, repeated: true },
+    { no: 2, name: "trips", kind: "message", T: Trip, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): History {
@@ -50,9 +93,9 @@ export class History extends Message<History> {
 }
 
 /**
- * @generated from message browser.Node
+ * @generated from message browser.Visit
  */
-export class Node extends Message<Node> {
+export class Visit extends Message<Visit> {
   /**
    * @generated from field: string id = 1;
    */
@@ -69,51 +112,94 @@ export class Node extends Message<Node> {
   title = "";
 
   /**
-   * @generated from field: double open = 4;
+   * @generated from field: string tab = 4;
    */
-  open = 0;
+  tab = "";
 
   /**
-   * @generated from field: double close = 5;
+   * @generated from field: repeated browser.Focus focus = 5;
    */
-  close = 0;
+  focus: Focus[] = [];
 
-  constructor(data?: PartialMessage<Node>) {
+  constructor(data?: PartialMessage<Visit>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "browser.Node";
+  static readonly typeName = "browser.Visit";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "open", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
-    { no: 5, name: "close", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
+    { no: 4, name: "tab", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "focus", kind: "message", T: Focus, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Node {
-    return new Node().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Visit {
+    return new Visit().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Node {
-    return new Node().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Visit {
+    return new Visit().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Node {
-    return new Node().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Visit {
+    return new Visit().fromJsonString(jsonString, options);
   }
 
-  static equals(a: Node | PlainMessage<Node> | undefined, b: Node | PlainMessage<Node> | undefined): boolean {
-    return proto3.util.equals(Node, a, b);
+  static equals(a: Visit | PlainMessage<Visit> | undefined, b: Visit | PlainMessage<Visit> | undefined): boolean {
+    return proto3.util.equals(Visit, a, b);
   }
 }
 
 /**
- * @generated from message browser.Edge
+ * @generated from message browser.Focus
  */
-export class Edge extends Message<Edge> {
+export class Focus extends Message<Focus> {
+  /**
+   * @generated from field: double open = 1;
+   */
+  open = 0;
+
+  /**
+   * @generated from field: double close = 2;
+   */
+  close = 0;
+
+  constructor(data?: PartialMessage<Focus>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "browser.Focus";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "open", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
+    { no: 2, name: "close", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Focus {
+    return new Focus().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Focus {
+    return new Focus().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Focus {
+    return new Focus().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Focus | PlainMessage<Focus> | undefined, b: Focus | PlainMessage<Focus> | undefined): boolean {
+    return proto3.util.equals(Focus, a, b);
+  }
+}
+
+/**
+ * @generated from message browser.Trip
+ */
+export class Trip extends Message<Trip> {
   /**
    * @generated from field: string from = 1;
    */
@@ -124,50 +210,32 @@ export class Edge extends Message<Edge> {
    */
   to = "";
 
-  /**
-   * @generated from field: string tab = 3;
-   */
-  tab = "";
-
-  /**
-   * @generated from field: double visit_time = 4;
-   */
-  visitTime = 0;
-
-  /**
-   * @generated from field: double visit_duration = 5;
-   */
-  visitDuration = 0;
-
-  constructor(data?: PartialMessage<Edge>) {
+  constructor(data?: PartialMessage<Trip>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "browser.Edge";
+  static readonly typeName = "browser.Trip";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "from", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "to", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "tab", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "visit_time", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
-    { no: 5, name: "visit_duration", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Edge {
-    return new Edge().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Trip {
+    return new Trip().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Edge {
-    return new Edge().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Trip {
+    return new Trip().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Edge {
-    return new Edge().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Trip {
+    return new Trip().fromJsonString(jsonString, options);
   }
 
-  static equals(a: Edge | PlainMessage<Edge> | undefined, b: Edge | PlainMessage<Edge> | undefined): boolean {
-    return proto3.util.equals(Edge, a, b);
+  static equals(a: Trip | PlainMessage<Trip> | undefined, b: Trip | PlainMessage<Trip> | undefined): boolean {
+    return proto3.util.equals(Trip, a, b);
   }
 }
 
