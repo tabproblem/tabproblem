@@ -706,6 +706,72 @@ html {
   --bc: 0.746477 0.0216 264.435964;
 }
 
+[data-theme=retro] {
+  color-scheme: light;
+  --inc: 0.90923 0.043042 262.880917;
+  --suc: 0.12541 0.033982 149.213788;
+  --wac: 0.133168 0.031484 58.31834;
+  --erc: 0.13144 0.0398 27.33;
+  --animation-btn: 0.25s;
+  --animation-input: .2s;
+  --btn-focus-scale: 0.95;
+  --border-btn: 1px;
+  --tab-border: 1px;
+  --p: 0.768664 0.104092 22.664655;
+  --pc: 0.265104 0.006243 0.522862;
+  --s: 0.807415 0.052534 159.094608;
+  --sc: 0.265104 0.006243 0.522862;
+  --a: 0.703919 0.125455 52.953428;
+  --ac: 0.265104 0.006243 0.522862;
+  --n: 0.284181 0.009519 355.534017;
+  --nc: 0.925604 0.025113 89.217311;
+  --b1: 0.916374 0.034554 90.51575;
+  --b2: 0.882722 0.049418 91.774344;
+  --b3: 0.84133 0.065952 90.856665;
+  --bc: 0.265104 0.006243 0.522862;
+  --in: 0.54615 0.215208 262.880917;
+  --su: 0.627052 0.169912 149.213788;
+  --wa: 0.66584 0.157422 58.31834;
+  --er: 0.6572 0.199 27.33;
+  --rounded-box: 0.4rem;
+  --rounded-btn: 0.4rem;
+  --rounded-badge: 0.4rem;
+  --tab-radius: 0.4rem;
+}
+
+:root:has(input.theme-controller[value=retro]:checked) {
+  color-scheme: light;
+  --inc: 0.90923 0.043042 262.880917;
+  --suc: 0.12541 0.033982 149.213788;
+  --wac: 0.133168 0.031484 58.31834;
+  --erc: 0.13144 0.0398 27.33;
+  --animation-btn: 0.25s;
+  --animation-input: .2s;
+  --btn-focus-scale: 0.95;
+  --border-btn: 1px;
+  --tab-border: 1px;
+  --p: 0.768664 0.104092 22.664655;
+  --pc: 0.265104 0.006243 0.522862;
+  --s: 0.807415 0.052534 159.094608;
+  --sc: 0.265104 0.006243 0.522862;
+  --a: 0.703919 0.125455 52.953428;
+  --ac: 0.265104 0.006243 0.522862;
+  --n: 0.284181 0.009519 355.534017;
+  --nc: 0.925604 0.025113 89.217311;
+  --b1: 0.916374 0.034554 90.51575;
+  --b2: 0.882722 0.049418 91.774344;
+  --b3: 0.84133 0.065952 90.856665;
+  --bc: 0.265104 0.006243 0.522862;
+  --in: 0.54615 0.215208 262.880917;
+  --su: 0.627052 0.169912 149.213788;
+  --wa: 0.66584 0.157422 58.31834;
+  --er: 0.6572 0.199 27.33;
+  --rounded-box: 0.4rem;
+  --rounded-btn: 0.4rem;
+  --rounded-badge: 0.4rem;
+  --tab-radius: 0.4rem;
+}
+
 *, ::before, ::after {
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
@@ -11338,6 +11404,12 @@ details.collapse summary::-webkit-details-marker {
   margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
 }
 
+.space-y-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
+}
+
 .space-y-4 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
@@ -11710,6 +11782,11 @@ details.collapse summary::-webkit-details-marker {
   border-top-right-radius: 0.25rem;
 }
 
+.rounded-t-none {
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
+
 .rounded-bl {
   border-bottom-left-radius: 0.25rem;
 }
@@ -11832,6 +11909,11 @@ details.collapse summary::-webkit-details-marker {
   border-style: none;
 }
 
+.border-base-300 {
+  --tw-border-opacity: 1;
+  border-color: var(--fallback-b3,oklch(var(--b3)/var(--tw-border-opacity)));
+}
+
 .border-red-200 {
   --tw-border-opacity: 1;
   border-color: rgb(254 202 202 / var(--tw-border-opacity));
@@ -11854,6 +11936,11 @@ details.collapse summary::-webkit-details-marker {
 .bg-\[rgb\(255\2c 0\2c 0\)\] {
   --tw-bg-opacity: 1;
   background-color: rgb(255 0 0 / var(--tw-bg-opacity));
+}
+
+.bg-base-100 {
+  --tw-bg-opacity: 1;
+  background-color: var(--fallback-b1,oklch(var(--b1)/var(--tw-bg-opacity)));
 }
 
 .bg-primary {
